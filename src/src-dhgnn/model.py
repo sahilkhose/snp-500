@@ -148,7 +148,8 @@ class StockModel(nn.Module): # TODO hgnn, lstm, fc details
             con_e = {}
             adj_u = {}
 
-            hg_tensor = torch.zeros(116, 800).cuda()
+            # hg_tensor = torch.zeros(116, 800).cuda()
+            hg_tensor = torch.zeros(116, 768+self.hidden_size).cuda()
             # print("price shape")
             # print(price.shape)
 
