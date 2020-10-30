@@ -41,28 +41,28 @@ def train_fn(data_loader, model, optimizer, device, epoch):
     fin_y = []  # To calculate accuracy
     fin_outputs = []  # To calculate accuracy
 
-    # data = next(iter(data_loader))
-    for batch_id, data in tqdm(enumerate(data_loader), total=len(data_loader), desc=f"Train Epoch {epoch}/{config.EPOCHS}"):
-        # Preparing data:
-        hgs, node_embs, y, prices = data 
+    data = next(iter(data_loader))
+    # for batch_id, data in tqdm(enumerate(data_loader), total=len(data_loader), desc=f"Train Epoch {epoch}/{config.EPOCHS}"):
+    # Preparing data:
+    hgs, node_embs, y, prices = data 
 
-        for hg, node_emb in zip(hgs, node_embs):
-            hg = hg.to(device, dtype=torch.long)
-            node_emb = node_emb.to(device, dtype=torch.float)
-        y = y.to(device, dtype=torch.float)
+    for hg, node_emb in zip(hgs, node_embs):
+        hg = hg.to(device, dtype=torch.long)
+        node_emb = node_emb.to(device, dtype=torch.float)
+    y = y.to(device, dtype=torch.float)
 
-        # Train:
-        optimizer.zero_grad()
-        outputs = model(hgs, node_embs, prices) # (num_stocks, 2)
-        loss = loss_fn(outputs, y)
-        LOSS += loss
-        loss.backward() 
-        optimizer.step()
+    # Train:
+    optimizer.zero_grad()
+    outputs = model(hgs, node_embs, prices) # (num_stocks, 2)
+    loss = loss_fn(outputs, y)
+    LOSS += loss
+    loss.backward() 
+    optimizer.step()
 
-        fin_y.extend(y.view(-1, 1).cpu().detach().numpy().tolist())  # (num_stocks, 1)
-        fin_outputs.extend(torch.sigmoid(outputs).cpu().detach().numpy().tolist())  # (num_stocks, 2)
+    fin_y.extend(y.view(-1, 1).cpu().detach().numpy().tolist())  # (num_stocks, 1)
+    fin_outputs.extend(torch.sigmoid(outputs).cpu().detach().numpy().tolist())  # (num_stocks, 2)
         
-    LOSS/=len(data_loader)
+    # LOSS/=len(data_loader)
     return fin_outputs, fin_y, LOSS
         
 def eval_fn(data_loader, model, device, epoch, eval_type):
@@ -116,10 +116,12 @@ def metrics_fn(outputs, targets, loss, all_ones=False):
     acc = metrics.accuracy_score(targets, outputs)
     mcc = metrics.matthews_corrcoef(targets, outputs)
     cm = metrics.confusion_matrix(targets, outputs)
+    f1 = metrics.f1_score(targets, outputs)
 
     print(f"Loss      : {round(float(loss), 4)}")
     print(f"Accuracy  : {round(acc, 4)}")
     print(f"MCC Score : {round(mcc, 4)}")
+    print(f"F1 Score  : {round(f1, 4)}")
     print(f"Confusion Matrix: \n{cm}\n")
 
     return acc, cm, mcc
