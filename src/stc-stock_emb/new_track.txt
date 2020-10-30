@@ -1,0 +1,425 @@
+All ones: 0.5422
+-----------------------------------------------------------
+-----------------------------------------------------------
+Epoch 1 Training Loss: 0.6945
+Epoch 1 Validation Loss: 0.6934
+Epoch 1 Test Loss: 0.6935
+
+
+VALID:
+Validation Accuracy Score = 0.4645
+MCC Score = -0.0042
+Confusion Matrix: 
+ [[78525   561]
+ [90605   583]]
+
+TEST:
+Test Accuracy Score = 0.4585
+MCC Score = 0.0020
+Confusion Matrix: 
+ [[77309   628]
+ [91559   778]]
+-----------------------------------------------------------
+-----------------------------------------------------------
+Epoch 2 Training Loss: 0.6932
+Epoch 2 Validation Loss: 0.6930
+Epoch 2 Test Loss: 0.6930
+
+
+VALID:
+Validation Accuracy Score = 0.5316
+MCC Score = 0.0140
+Confusion Matrix: 
+ [[ 9817 69269]
+ [10487 80701]]
+
+TEST:
+Test Accuracy Score = 0.5333
+MCC Score = 0.0082
+Confusion Matrix: 
+ [[11150 66787]
+ [12678 79659]]
+
+-----------------------------------------------------------
+-----------------------------------------------------------
+Epoch 3 Training Loss: 0.6926
+Epoch 3 Validation Loss: 0.6929
+Epoch 3 Test Loss: 0.6929
+
+
+VALID:
+Validation Accuracy Score = 0.5317
+MCC Score = 0.0137
+Confusion Matrix: 
+ [[ 9456 69630]
+ [10104 81084]]
+
+TEST:
+Test Accuracy Score = 0.5338
+MCC Score = 0.0088
+Confusion Matrix: 
+ [[10778 67159]
+ [12210 80127]]
+
+-----------------------------------------------------------
+-----------------------------------------------------------
+Epoch 4 Training Loss: 0.6924
+Epoch 4 Validation Loss: 0.6929
+Epoch 4 Test Loss: 0.6929
+
+
+VALID:
+Validation Accuracy Score = 0.5317
+MCC Score = 0.0133
+Confusion Matrix: 
+ [[ 9251 69835]
+ [ 9897 81291]]
+
+TEST:
+Test Accuracy Score = 0.5338
+MCC Score = 0.0082
+Confusion Matrix: 
+ [[10514 67423]
+ [11942 80395]]
+-----------------------------------------------------------
+-----------------------------------------------------------
+Epoch 5 Training Loss: 0.6924
+Epoch 5 Validation Loss: 0.6930
+Epoch 5 Test Loss: 0.6929
+
+
+VALID:
+Validation Accuracy Score = 0.5319
+MCC Score = 0.0128
+Confusion Matrix: 
+ [[ 8682 70404]
+ [ 9289 81899]]
+
+TEST:
+Test Accuracy Score = 0.5348
+MCC Score = 0.0088
+Confusion Matrix: 
+ [[ 9808 68129]
+ [11080 81257]]
+-----------------------------------------------------------
+-----------------------------------------------------------
+Epoch 6 Training Loss: 0.6923
+Epoch 6 Validation Loss: 0.6930
+Epoch 6 Test Loss: 0.6929
+
+
+VALID:
+Validation Accuracy Score = 0.5320
+MCC Score = 0.0126
+Confusion Matrix: 
+ [[ 8534 70552]
+ [ 9136 82052]]
+
+TEST:
+Test Accuracy Score = 0.5347
+MCC Score = 0.0083
+Confusion Matrix: 
+ [[ 9634 68303]
+ [10912 81425]]
+-----------------------------------------------------------
+-----------------------------------------------------------
+Epoch 10 Training Loss: 0.6923
+Epoch 10 Validation Loss: 0.6931
+Epoch 10 Test Loss: 0.6930
+
+
+VALID:
+Validation Accuracy Score = 0.5320
+MCC Score = 0.0121
+Confusion Matrix: 
+ [[ 8183 70903]
+ [ 8769 82419]]
+
+TEST:
+Test Accuracy Score = 0.5352
+MCC Score = 0.0082
+Confusion Matrix: 
+ [[ 9127 68810]
+ [10327 82010]]
+-----------------------------------------------------------
+-----------------------------------------------------------
+Epoch 8 Training Loss: 0.6923
+Epoch 8 Validation Loss: 0.6931
+Epoch 8 Test Loss: 0.6930
+
+
+VALID:
+Validation Accuracy Score = 0.5322
+MCC Score = 0.0112
+Confusion Matrix: 
+ [[ 7492 71594]
+ [ 8048 83140]]
+
+TEST:
+Test Accuracy Score = 0.5356
+MCC Score = 0.0068
+Confusion Matrix: 
+ [[ 8204 69733]
+ [ 9335 83002]]
+-----------------------------------------------------------
+-----------------------------------------------------------
+-----------------------------------------------------------
+-----------------------------------------------------------
+-----------------------------------------------------------
+-----------------------------------------------------------
+
+
+Epoch 100 Training Loss: 0.6920
+Epoch 100 Validation Loss: 0.6935
+Epoch 100 Test Loss: 0.6934
+
+
+VALID:
+Validation Accuracy Score = 0.5320
+MCC Score = 0.0133
+Confusion Matrix: 
+ [[ 8826 70260]
+ [ 9420 81768]]
+
+TEST:
+Test Accuracy Score = 0.5343
+MCC Score = 0.0072
+Confusion Matrix: 
+ [[ 9745 68192]
+ [11104 81233]]
+
+-----------------------------------------------------------
+-----------------------------------------------------------
+Epoch 150 Training Loss: 0.6919
+Epoch 150 Validation Loss: 0.6935
+Epoch 150 Test Loss: 0.6934
+
+
+VALID:
+Validation Accuracy Score = 0.5320
+MCC Score = 0.0137
+Confusion Matrix: 
+ [[ 8983 70103]
+ [ 9575 81613]]
+
+TEST:
+Test Accuracy Score = 0.5342
+MCC Score = 0.0078
+Confusion Matrix: 
+ [[10016 67921]
+ [11382 80955]]
+
+-----------------------------------------------------------
+-----------------------------------------------------------
+Epoch 200 Training Loss: 0.6918
+Epoch 200 Validation Loss: 0.6935
+Epoch 200 Test Loss: 0.6935
+
+
+VALID:
+Validation Accuracy Score = 0.5319
+MCC Score = 0.0138
+Confusion Matrix: 
+ [[ 9147 69939]
+ [ 9754 81434]]
+
+TEST:
+Test Accuracy Score = 0.5339
+MCC Score = 0.0077
+Confusion Matrix: 
+ [[10262 67675]
+ [11675 80662]]
+
+-----------------------------------------------------------
+-----------------------------------------------------------
+Epoch 250 Training Loss: 0.6918
+Epoch 250 Validation Loss: 0.6936
+Epoch 250 Test Loss: 0.6935
+
+
+VALID:
+Validation Accuracy Score = 0.5320
+MCC Score = 0.0139
+Confusion Matrix: 
+ [[ 9101 69985]
+ [ 9693 81495]]
+
+TEST:
+Test Accuracy Score = 0.5339
+MCC Score = 0.0074
+Confusion Matrix: 
+ [[10204 67733]
+ [11629 80708]]
+
+-----------------------------------------------------------
+-----------------------------------------------------------
+Epoch 300 Training Loss: 0.6917
+Epoch 300 Validation Loss: 0.6935
+Epoch 300 Test Loss: 0.6935
+
+
+VALID:
+Validation Accuracy Score = 0.5320
+MCC Score = 0.0142
+Confusion Matrix: 
+ [[ 9239 69847]
+ [ 9832 81356]]
+
+TEST:
+Test Accuracy Score = 0.5337
+MCC Score = 0.0074
+Confusion Matrix: 
+ [[10385 67552]
+ [11836 80501]]
+
+-----------------------------------------------------------
+-----------------------------------------------------------
+
+
+Epoch 350 Training Loss: 0.6917
+Epoch 350 Validation Loss: 0.6938
+Epoch 350 Test Loss: 0.6938
+
+
+VALID:
+Validation Accuracy Score = 0.5322
+MCC Score = 0.0143
+Confusion Matrix: 
+ [[ 9053 70033]
+ [ 9619 81569]]
+
+TEST:
+Test Accuracy Score = 0.5339
+MCC Score = 0.0074
+Confusion Matrix: 
+ [[10162 67775]
+ [11581 80756]]
+
+-----------------------------------------------------------
+-----------------------------------------------------------
+
+Epoch 400 Training Loss: 0.6916
+Epoch 400 Validation Loss: 0.6936
+Epoch 400 Test Loss: 0.6936
+
+
+VALID:
+Validation Accuracy Score = 0.5320
+MCC Score = 0.0144
+Confusion Matrix: 
+ [[ 9347 69739]
+ [ 9938 81250]]
+
+TEST:
+Test Accuracy Score = 0.5340
+MCC Score = 0.0087
+Confusion Matrix: 
+ [[10544 67393]
+ [11945 80392]]
+
+
+
+-----------------------------------------------------------
+-----------------------------------------------------------
+
+
+
+Epoch 450 Training Loss: 0.6916
+Epoch 450 Validation Loss: 0.6936
+Epoch 450 Test Loss: 0.6937
+
+
+VALID:
+Validation Accuracy Score = 0.5321
+MCC Score = 0.0145
+Confusion Matrix: 
+ [[ 9344 69742]
+ [ 9929 81259]]
+
+TEST:
+Test Accuracy Score = 0.5341
+MCC Score = 0.0088
+Confusion Matrix: 
+ [[10558 67379]
+ [11951 80386]]
+
+
+-----------------------------------------------------------
+-----------------------------------------------------------
+Epoch 500 Training Loss: 0.6916
+Epoch 500 Validation Loss: 0.6935
+Epoch 500 Test Loss: 0.6937
+
+
+VALID:
+Validation Accuracy Score = 0.5322
+MCC Score = 0.0150
+Confusion Matrix: 
+ [[ 9404 69682]
+ [ 9972 81216]]
+
+TEST:
+Test Accuracy Score = 0.5340
+MCC Score = 0.0089
+Confusion Matrix: 
+ [[10639 67298]
+ [12038 80299]]
+-----------------------------------------------------------
+-----------------------------------------------------------
+
+Epoch 24 Training Loss: 0.6917
+Epoch 24 Validation Loss: 0.6934
+Epoch 24 Test Loss: 0.6934
+
+
+VALID:
+Validation Accuracy Score = 0.5319
+MCC Score = 0.0124
+Confusion Matrix: 
+ [[ 8558 70528]
+ [ 9175 82013]]
+
+TEST:
+Test Accuracy Score = 0.5345
+MCC Score = 0.0081
+Confusion Matrix: 
+ [[ 9802 68135]
+ [11115 81222]]
+
+-----------------------------------------------------------
+new model
+-----------------------------------------------------------
+Epoch 20 Training Loss: 0.6930546760559082
+Epoch 20 Validation Loss: 0.6930659413337708
+Epoch 20 Test Loss: 0.6929963827133179
+
+
+VALID:
+Validation Accuracy Score = 0.5328705498197024
+MCC Score = 0.013041313899272248
+Confusion Matrix: 
+ [[ 7423 71663]
+ [ 7877 83311]]
+
+TEST:
+Test Accuracy Score = 0.5354604930876117
+MCC Score = 0.005517319628657302
+Confusion Matrix: 
+ [[ 7951 69986]
+ [ 9113 83224]]
+
+
+-----------------------------------------------------------
+-----------------------------------------------------------
+
+
+-----------------------------------------------------------
+-----------------------------------------------------------
+
+
+-----------------------------------------------------------
+-----------------------------------------------------------
+
+
+-----------------------------------------------------------
+-----------------------------------------------------------
