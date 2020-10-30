@@ -5,8 +5,8 @@ import transformers
 ################################################################
 STOCK_NUM = 116  # 481/119/50 #TODO could automate this
 
-MODEL_PATH = f"../models-stock-emb/{STOCK_NUM}/"
-CONFUSION_PATH = f"../models-stock-emb/{STOCK_NUM}/CONFUSION/"
+MODEL_PATH = f"../../models/models-stock-emb/{STOCK_NUM}/"
+CONFUSION_PATH = f"../../models/models-stock-emb/{STOCK_NUM}/CONFUSION/"
 
 NUM = 0
 EPOCHS = 500
@@ -17,10 +17,10 @@ EVAL_EVERY = 5  # epochs
 ################################################################
 ### DATA PATH:
 ################################################################
-DATES_PATH = "../input/DATA/DATES.txt"
-ARTICLES_EMB = "../input/DATA/ARTICLES/"
-# data_path = f"../input/DATA-{STOCK_NUM}/"
-data_path = f"../input/DATA-N/filter_data/"
+DATES_PATH = "../../input/DATA/DATES.txt"
+ARTICLES_EMB = "../../input/DATA/ARTICLES/"
+# data_path = f"../../input/DATA-{STOCK_NUM}/"
+data_path = f"../../input/DATA-N/filter_data/"
 
 HG_PATH = data_path + "FILTER_HYPERGRAPHS/"
 NAMES_HG_PATH = data_path + "FILTER_NAMES_HG.txt"
