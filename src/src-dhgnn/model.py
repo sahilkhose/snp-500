@@ -97,7 +97,7 @@ class VertexConv(nn.Module):
 
 
 class StockModel(nn.Module): # TODO hgnn, lstm, fc details
-    def __init__(self, stock_emb_dim=768, hidden_size=32, heads=4, negative_slope=0.2, dropout=0.1):
+    def __init__(self, stock_emb_dim=config.BERT_SIZE, hidden_size=32, heads=4, negative_slope=0.2, dropout=0.1):
         """Init StockModel.
         
         @param stock_emb_dim  (int)  : BERT stock emb dimension.
@@ -110,7 +110,7 @@ class StockModel(nn.Module): # TODO hgnn, lstm, fc details
         self.hidden_size = hidden_size
         self.price_emb = nn.Linear(1, hidden_size)
         self.price_lstm = nn.LSTM(input_size=1, hidden_size=hidden_size, bias=True, batch_first=False)
-        self.lstm = nn.LSTM(input_size=hidden_size+768, hidden_size=hidden_size, bias=True, batch_first=False)
+        self.lstm = nn.LSTM(input_size=hidden_size+config.BERT_SIZE, hidden_size=hidden_size, bias=True, batch_first=False)
         self.fc1 = nn.Linear(hidden_size, hidden_size*2)
         self.fc2 = nn.Linear(hidden_size*2, 2)
         self.dropout = nn.Dropout(dropout)
@@ -149,7 +149,7 @@ class StockModel(nn.Module): # TODO hgnn, lstm, fc details
             adj_u = {}
 
             # hg_tensor = torch.zeros(116, 800).cuda()
-            hg_tensor = torch.zeros(116, 768+self.hidden_size).cuda()
+            hg_tensor = torch.zeros(116, config.BERT_SIZE+self.hidden_size).cuda()
             # print("price shape")
             # print(price.shape)
 
@@ -223,9 +223,8 @@ class StockModel(nn.Module): # TODO hgnn, lstm, fc details
         # print(len(hg_outputs), hg_outputs[0].shape)
 
 
-
         ### Passing the output from HGNNs into a LSTM followed by linear layers.
-        hg_outputs = torch.cat(hg_outputs).view(-1, config.STOCK_NUM, self.hidden_size+768)  # (num_days, stock_num, hidden_size+768) = (4, 116, 800)
+        hg_outputs = torch.cat(hg_outputs).view(-1, config.STOCK_NUM, self.hidden_size+config.BERT_SIZE)  # (num_days, stock_num, hidden_size+768) = (4, 116, 800)
         lstm_out, _ = self.lstm(hg_outputs)[-1]  # (1, stock_num, hidden_size)
         lstm_out = lstm_out.squeeze(0)  # (stock_num, hidden_size)
         out = self.fc2(self.dropout(self.fc1(lstm_out)))  # (stock_num, 2)

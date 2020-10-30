@@ -13,6 +13,7 @@ EPOCHS = 500
 LOAD_PATH = MODEL_PATH + "3_model_500.bin"
 LR = 5e-4
 EVAL_EVERY = 5  # epochs
+BERT_SIZE = 768
 
 ################################################################
 ### DATA PATH:
