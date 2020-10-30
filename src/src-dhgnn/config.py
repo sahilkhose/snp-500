@@ -5,8 +5,8 @@
 ################################################################
 STOCK_NUM = 116  # 481/119/50 #TODO could automate this
 
-MODEL_PATH = f"../../models-dhgnn/{STOCK_NUM}/"
-CONFUSION_PATH = f"../../models-dhgnn/{STOCK_NUM}/CONFUSION/"
+MODEL_PATH = f"../../models/models-dhgnn/{STOCK_NUM}/"
+CONFUSION_PATH = f"../../models/models-dhgnn/{STOCK_NUM}/CONFUSION/"
 
 NUM = 0
 EPOCHS = 500
