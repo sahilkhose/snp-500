@@ -71,9 +71,10 @@ def fetch_data(today):
     hgs = []
     node_embs = []  # doc_embs
     dates = lookback_window_dates(today)
-
+    num_edges = 0
     for date in dates:
         hg = np.load(config.HG_PATH + date + ".npy")
+        num_edges += hg.shape[1]
         # Process the npy hg to feed it to the hgnn
         inci_sparse = sparse.coo_matrix(hg)
         incidence_edge = utils.from_scipy_sparse_matrix(inci_sparse)
@@ -83,12 +84,14 @@ def fetch_data(today):
         # node_emb = node_emb_generate(date)
         node_emb = []
         for article in sorted(os.listdir(os.path.join(config.ARTICLES, date))):
-            node_emb.append(torch.load(os.path.join(config.ARTICLES, date, article), map_location='cpu'))
+            a = torch.load(os.path.join(config.ARTICLES, date, article), map_location='cpu')
+            # print(a.shape, a.shape, a[:, :config.BERT_SIZE].shape, config.BERT_SIZE)
+            node_emb.append(a[:, :config.BERT_SIZE])
         # node_emb = node_emb.detach().clone().type(torch.float)
 
         hgs.append(hyp_input)
         node_embs.append(node_emb)
-
+    print("Number of edges: ", num_edges)
     return hgs, node_embs
     
 def lookback_window_dates(today):

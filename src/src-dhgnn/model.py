@@ -97,7 +97,7 @@ class VertexConv(nn.Module):
 
 
 class StockModel(nn.Module): # TODO hgnn, lstm, fc details
-    def __init__(self, stock_emb_dim=config.BERT_SIZE, hidden_size=32, heads=4, negative_slope=0.2, dropout=0.1):
+    def __init__(self, stock_emb_dim=config.BERT_SIZE, hidden_size=16, heads=4, negative_slope=0.2, dropout=0.1):
         """Init StockModel.
         
         @param stock_emb_dim  (int)  : BERT stock emb dimension.
@@ -128,7 +128,7 @@ class StockModel(nn.Module): # TODO hgnn, lstm, fc details
 
         @returns out     (torch.tensor): Prediction of all tickers.       tensor.shape: (stock_num, 2)
         """
-        
+        print("__"*80)
         new_prices = []
         prices = torch.cat(prices, dim=0)
         # print("__"*80)
@@ -178,11 +178,13 @@ class StockModel(nn.Module): # TODO hgnn, lstm, fc details
                 # print(vertex, hyper_edge_set)
                 for hyper_edge in hyper_edge_set:
                     a = price_emb[con_e[hyper_edge]]
+                    # print(price_emb.shape)
                     # print("A shape:")
                     # print(a.shape)  # (k, 32)
                     # b = node_emb[hyper_edge]
                     vc = VertexConv(dim_in=a.shape[1], k=a.shape[0]).cuda()  # (dim_in = 32, k = number of vertices)
                     a_b = vc(a.unsqueeze(0).cuda())
+                    # print(a_b.shape)
                     # print("a_b shape:")
                     # print(a_b.shape)  # (1, 32)
                     # print("hyper_Edge:")
@@ -190,6 +192,7 @@ class StockModel(nn.Module): # TODO hgnn, lstm, fc details
                     # print("node_emb[hyperedge].shape")
                     # print(node_emb[hyper_edge].shape)
                     z = torch.cat((a_b, node_emb[hyper_edge].squeeze(0).cuda()), dim=-1)
+                    # print(node_emb[hyper_edge].shape)
                     # print("z.shape")
                     # print(z.shape)
                     hyper_edge_list.append(z.view(z.shape[0], 1, z.shape[1]))
@@ -201,7 +204,9 @@ class StockModel(nn.Module): # TODO hgnn, lstm, fc details
                 hyper_edge_list = torch.cat(hyper_edge_list, dim=1)
                 # print("hyper_edge_list:")
                 # print(hyper_edge_list.shape)
-
+                # print("__"*80)
+                # print(hyper_edge_list.shape)
+                # print("__"*80)
                 ec = EdgeConv(hyper_edge_list.shape[-1], hyper_edge_list.shape[-1]//4).cuda()
                 ec_out = ec(hyper_edge_list)
                 # print("ec_out:")
@@ -225,6 +230,7 @@ class StockModel(nn.Module): # TODO hgnn, lstm, fc details
 
         ### Passing the output from HGNNs into a LSTM followed by linear layers.
         hg_outputs = torch.cat(hg_outputs).view(-1, config.STOCK_NUM, self.hidden_size+config.BERT_SIZE)  # (num_days, stock_num, hidden_size+768) = (4, 116, 800)
+        print(hg_outputs.shape)
         lstm_out, _ = self.lstm(hg_outputs)[-1]  # (1, stock_num, hidden_size)
         lstm_out = lstm_out.squeeze(0)  # (stock_num, hidden_size)
         out = self.fc2(self.dropout(self.fc1(lstm_out)))  # (stock_num, 2)
