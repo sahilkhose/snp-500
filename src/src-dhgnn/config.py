@@ -5,8 +5,8 @@ import transformers
 ################################################################
 STOCK_NUM = 116  # 481/119/50 #TODO could automate this
 
-MODEL_PATH = f"../models-dhgnn/{STOCK_NUM}/"
-CONFUSION_PATH = f"../models-dhgnn/{STOCK_NUM}/CONFUSION/"
+MODEL_PATH = f"../../models-dhgnn/{STOCK_NUM}/"
+CONFUSION_PATH = f"../../models-dhgnn/{STOCK_NUM}/CONFUSION/"
 
 NUM = 0
 EPOCHS = 500
@@ -17,10 +17,10 @@ EVAL_EVERY = 5  # epochs
 ################################################################
 ### DATA PATH:
 ################################################################
-DATES_PATH = "../input/DATA/DATES.txt"
-ARTICLES = "../input/DATA/ARTICLES/"
+DATES_PATH = "../../input/DATA/DATES.txt"
+ARTICLES = "../../input/DATA/ARTICLES/"
 # data_path = f"../input/DATA-{STOCK_NUM}/"
-data_path = f"../input/DATA-N/filter_data/"
+data_path = f"../../input/DATA-N/filter_data/"
 
 HG_PATH = data_path + "FILTER_HYPERGRAPHS/"
 NAMES_HG_PATH = data_path + "FILTER_NAMES_HG.txt"
@@ -42,7 +42,7 @@ PRICE_PATH = data_path + "FILTER_PRICE.csv"
 ################################################################
 LOOKBACK_WINDOW = 3  # actual window = LOOKBACK_WINDOW + 1(today's data)
 DEVICE = "cuda"
-BERT_PATH = "../input/bert_base_uncased"
+BERT_PATH = "../../input/bert_base_uncased"
 TRAIN_BATCH_SIZE = 1
 # TOKENIZER = transformers.BertTokenizer.from_pretrained(BERT_PATH, do_lower_case=True)
 # zero init for node_emb: Accuracy Score = 0.5422847880474999
