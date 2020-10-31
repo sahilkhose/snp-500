@@ -87,7 +87,7 @@ def run():
             all_ones_cm = metrics.confusion_matrix(targets_t, list(np.ones((len(targets_t)))))
             print(f"Accuracy  : {round(all_ones_acc, 4)}")
             print(f"Confusion Matrix: \n{all_ones_cm}\n")
-            break
+            # break
 
         #* Validation, Testing and saving models:
         if (epoch % config.EVAL_EVERY == 0) or (epoch % 50 == 0) or (epoch == config.EPOCHS):
