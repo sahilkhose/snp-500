@@ -91,7 +91,7 @@ def fetch_data(today):
 
         hgs.append(hyp_input)
         node_embs.append(node_emb)
-    print("Number of edges: ", num_edges)
+    # print("Number of edges: ", num_edges)
     return hgs, node_embs
     
 def lookback_window_dates(today):

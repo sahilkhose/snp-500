@@ -91,7 +91,9 @@ def eval_fn(data_loader, model, device, epoch, eval_type):
 
             for hg, node_emb in zip(hgs, node_embs):
                 hg = hg.to(device, dtype=torch.long)
-                node_emb = node_emb.to(device, dtype=torch.float)
+                for article in node_emb:
+                    article = article.to(device, dtype=torch.float)
+                # node_emb = node_emb.to(device, dtype=torch.float)
             y = y.to(device, dtype=torch.float)
 
             # Evaluate:

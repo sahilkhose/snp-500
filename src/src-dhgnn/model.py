@@ -128,7 +128,7 @@ class StockModel(nn.Module): # TODO hgnn, lstm, fc details
 
         @returns out     (torch.tensor): Prediction of all tickers.       tensor.shape: (stock_num, 2)
         """
-        print("__"*80)
+        # print("__"*80)
         new_prices = []
         prices = torch.cat(prices, dim=0)
         # print("__"*80)
@@ -230,7 +230,7 @@ class StockModel(nn.Module): # TODO hgnn, lstm, fc details
 
         ### Passing the output from HGNNs into a LSTM followed by linear layers.
         hg_outputs = torch.cat(hg_outputs).view(-1, config.STOCK_NUM, self.hidden_size+config.BERT_SIZE)  # (num_days, stock_num, hidden_size+768) = (4, 116, 800)
-        print(hg_outputs.shape)
+        # print(hg_outputs.shape)
         lstm_out, _ = self.lstm(hg_outputs)[-1]  # (1, stock_num, hidden_size)
         lstm_out = lstm_out.squeeze(0)  # (stock_num, hidden_size)
         out = self.fc2(self.dropout(self.fc1(lstm_out)))  # (stock_num, 2)
