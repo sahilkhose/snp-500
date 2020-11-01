@@ -87,18 +87,19 @@ def run():
             all_ones_cm = metrics.confusion_matrix(targets_t, list(np.ones((len(targets_t)))))
             print(f"Accuracy  : {round(all_ones_acc, 4)}")
             print(f"Confusion Matrix: \n{all_ones_cm}\n")
-            
+
         df = pd.read_csv(config.TRAIN_DATA_SHEET, index_col=[0])
         ### append rows to an empty DataFrame 
         df = df.append({
         'model' : f"{config.args.NUM} epoch: {epoch}", 
-        'all_ones' : all_ones_acc, 
-        'acc' : acc, 
-        'mcc' : mcc,
-        'f1' : f1, 
+        'all_ones' : round(all_ones_acc, 4), 
+        'acc' : round(acc, 4), 
+        'mcc' : round(mcc, 4),
+        'f1' : round(f1, 4), 
         'lr' : config.args.LR},  
         ignore_index = True
         ) 
+        df.to_csv(config.TRAIN_DATA_SHEET)
        
 
         #* Validation, Testing and saving models:
@@ -117,6 +118,9 @@ def run():
             if accuracy_t > best_accuracy:
                 engine.save_model("best", accuracy_t, all_ones_acc, model, epoch, cm_t, mcc_t, f1_t)
                 best_accuracy = accuracy_t
+
+            elif epoch % 5 == 0:
+                engine.save_model("intermediate", accuracy_t, all_ones_acc, model, epoch, cm_t, mcc_t, f1_t)
 
             elif epoch % 50 == 0:
                 engine.save_model("intermediate", accuracy_t, all_ones_acc, model, epoch, cm_t, mcc_t, f1_t)

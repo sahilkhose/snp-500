@@ -86,6 +86,7 @@ def eval_fn(data_loader, model, device, epoch, eval_type):
     fin_outputs = []  # To calculate accuracy
 
     with torch.no_grad():
+        # data = next(iter(data_loader))
         for batch_id, data in tqdm(enumerate(data_loader), total=len(data_loader), desc=f"{eval_type} Epoch {epoch}"):
             # Preparing data:
             hgs, node_embs, y, prices = data
@@ -157,10 +158,11 @@ def save_model(model_type, accuracy_t, all_ones_acc, model, epoch, cm_t, mcc_t, 
     ### append rows to an empty DataFrame 
     df = df.append({
     'model' : f"{config.args.NUM}_model_{epoch}.bin", 
-    'all_ones' : all_ones_acc, 
-    'acc' : accuracy_t, 
-    'mcc' : mcc_t,
-    'f1' : f1_t, 
+    'all_ones' : round(all_ones_acc, 4), 
+    'acc' : round(accuracy_t, 4), 
+    'mcc' : round(mcc_t, 4),
+    'f1' : round(f1_t, 4), 
     'lr' : config.args.LR},  
     ignore_index = True
     ) 
+    df.to_csv(config.TEST_DATA_SHEET)
