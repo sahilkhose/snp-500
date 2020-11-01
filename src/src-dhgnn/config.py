@@ -7,6 +7,8 @@ STOCK_NUM = 116  # 481/119/50 #TODO could automate this
 
 MODEL_PATH = f"../../models/models-dhgnn/{STOCK_NUM}/"
 CONFUSION_PATH = f"../../models/models-dhgnn/{STOCK_NUM}/CONFUSION/"
+TEST_DATA_SHEET = f"../../models/models-dghnn/{STOCK_NUM}/test_data_sheet.csv"
+TRAIN_DATA_SHEET = f"../../models/models-dghnn/{STOCK_NUM}/train_data_sheet.csv"
 parser = argparse.ArgumentParser("Train  model args")
 parser.add_argument(
     "--NUM",

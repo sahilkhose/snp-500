@@ -6,6 +6,7 @@ Author:
 import config
 
 import os 
+import pandas as pd 
 import torch 
 import torch.nn as nn
 
@@ -152,4 +153,14 @@ def save_model(model_type, accuracy_t, all_ones_acc, model, epoch, cm_t, mcc_t, 
     cm_file = open(config.CONFUSION_PATH + f"{config.args.NUM}_model_{epoch}.txt", "w")
     for ele in cm_t:
         cm_file.write(str(ele) + "\n")
-    
+    df = pd.read_csv(config.TEST_DATA_SHEET, index_col=[0])
+    ### append rows to an empty DataFrame 
+    df = df.append({
+    'model' : f"{config.args.NUM}_model_{epoch}.bin", 
+    'all_ones' : all_ones_acc, 
+    'acc' : accuracy_t, 
+    'mcc' : mcc_t,
+    'f1' : f1_t, 
+    'lr' : config.args.LR},  
+    ignore_index = True
+    ) 
