@@ -1,4 +1,4 @@
-# import transformers
+import argparse
 
 ################################################################
 ### CHANGE:
@@ -7,13 +7,37 @@ STOCK_NUM = 116  # 481/119/50 #TODO could automate this
 
 MODEL_PATH = f"../../models/models-dhgnn/{STOCK_NUM}/"
 CONFUSION_PATH = f"../../models/models-dhgnn/{STOCK_NUM}/CONFUSION/"
-
-NUM = 0
+parser = argparse.ArgumentParser("Train  model args")
+parser.add_argument(
+    "--NUM",
+    type=int,
+    default=0,
+    help="prefix number to save the models eg: 0"
+)
+# NUM = 0
+parser.add_argument(
+    "--model_path",
+    type=str,
+    default="3_model_500.bin",
+    help="model path eg: 3_model_500.bin"
+)
+parser.add_argument(
+    "--LR",
+    type=float,
+    default=5e-4,
+    help="learning rate"
+)
+# LR = 5e-4
+parser.add_argument(
+    "--EVAL_EVERY",
+    type=int,
+    default=5,
+    help="number of epochs for every eval"
+)
+# EVAL_EVERY = 5  # epochs
+args = parser.parse_args()
+LOAD_PATH = MODEL_PATH + args.model_path
 EPOCHS = 500
-LOAD_PATH = MODEL_PATH + "3_model_500.bin"
-LR = 5e-4
-EVAL_EVERY = 5  # epochs
-# BERT_SIZE = 768//2
 BERT_SIZE = 64
 
 ################################################################
@@ -31,14 +55,6 @@ STOCK_EMB_PATH = data_path + "sent_embs.pt"
 LABELS_PATH = data_path + "FILTER_LABELS.csv"
 PRICE_PATH = data_path + "FILTER_PRICE.csv"
 
-
-# HG_PATH = data_path + "HYPERGRAPHS/"
-# NAMES_HG_PATH = data_path + "NAMES_HG.txt"
-# TICKERS_PATH = data_path + "NEW_TICKERS.txt"
-# STOCK_EMB_PATH = data_path + "sent_embs.pt"
-# LABELS_PATH = data_path + "NEW_LABELS.csv"
-# PRICE_PATH = data_path + "PRICE.csv"
-
 ################################################################
 ### FIX VALUES:
 ################################################################
@@ -46,5 +62,3 @@ LOOKBACK_WINDOW = 3  # actual window = LOOKBACK_WINDOW + 1(today's data)
 DEVICE = "cuda"
 BERT_PATH = "../../input/bert_base_uncased"
 TRAIN_BATCH_SIZE = 1
-# TOKENIZER = transformers.BertTokenizer.from_pretrained(BERT_PATH, do_lower_case=True)
-# zero init for node_emb: Accuracy Score = 0.5422847880474999

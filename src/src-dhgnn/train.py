@@ -4,6 +4,7 @@ Author:
     Sahil Khose (sahilkhose18@gmail.com)
 """
 import config 
+from config import args
 import dataset 
 import engine 
 
@@ -66,7 +67,7 @@ def run():
         print("Model loading", load_file)
         model.load_state_dict(torch.load(load_file))
     model.to(device)
-    optimizer = torch.optim.Adam(model.parameters(), lr=config.LR)
+    optimizer = torch.optim.Adam(model.parameters(), lr=config.args.LR)
 
     num_train_steps = int(len(x_train) / config.TRAIN_BATCH_SIZE * config.EPOCHS)
     best_accuracy = 0
@@ -89,7 +90,7 @@ def run():
             print(f"Confusion Matrix: \n{all_ones_cm}\n")
 
         #* Validation, Testing and saving models:
-        if (epoch % config.EVAL_EVERY == 0) or (epoch % 50 == 0) or (epoch == config.EPOCHS):
+        if (epoch % config.args.EVAL_EVERY == 0) or (epoch % 50 == 0) or (epoch == config.EPOCHS):
             #* Validation:
             outputs_v, targets_v, loss_v = engine.eval_fn(valid_data_loader, model, device, epoch, "Valid")
             print(f"\nEpoch {epoch} Valid metrics:")
@@ -98,18 +99,18 @@ def run():
             #* Testing:
             outputs_t, targets_t, loss_t = engine.eval_fn(test_data_loader, model, device, epoch, "Test")
             print(f"\nEpoch {epoch} Test metrics:")
-            accuracy_t, cm_t, _ = engine.metrics_fn(outputs_t, targets_t, loss_t)
+            accuracy_t, cm_t, mcc_t, f1_t = engine.metrics_fn(outputs_t, targets_t, loss_t)
             
             #* Saving models and Confusion Matrix:
             if accuracy_t > best_accuracy:
-                engine.save_model("best", accuracy_t, all_ones_acc, model, epoch, cm_t)
+                engine.save_model("best", accuracy_t, all_ones_acc, model, epoch, cm_t, mcc_t, f1_t)
                 best_accuracy = accuracy_t
 
             elif epoch % 50 == 0:
-                engine.save_model("intermediate", accuracy_t, all_ones_acc, model, epoch, cm_t)
+                engine.save_model("intermediate", accuracy_t, all_ones_acc, model, epoch, cm_t, mcc_t, f1_t)
 
             elif epoch == config.EPOCHS:
-                engine.save_model("last", accuracy_t, all_ones_acc, model, epoch, cm_t)
+                engine.save_model("last", accuracy_t, all_ones_acc, model, epoch, cm_t, mcc_t, f1_t)
 
 if __name__ == "__main__":
     run()

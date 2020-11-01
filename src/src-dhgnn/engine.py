@@ -5,7 +5,7 @@ Author:
 """
 import config
 
-
+import os 
 import torch 
 import torch.nn as nn
 
@@ -119,15 +119,21 @@ def metrics_fn(outputs, targets, loss, all_ones=False):
     acc = metrics.accuracy_score(targets, outputs)
     mcc = metrics.matthews_corrcoef(targets, outputs)
     cm = metrics.confusion_matrix(targets, outputs)
+    f1 = metrics.f1_score(targets, outputs)
 
     print(f"Loss      : {round(float(loss), 4)}")
     print(f"Accuracy  : {round(acc, 4)}")
     print(f"MCC Score : {round(mcc, 4)}")
+    print(f"F1 Score  : {round(f1, 4)}")
     print(f"Confusion Matrix: \n{cm}\n")
 
-    return acc, cm, mcc
+    return acc, cm, mcc, f1
 
-def save_model(model_type, accuracy_t, all_ones_acc, model, epoch, cm_t):
+def make_dir(dir_name):
+    if not os.path.exists(dir_name):
+        os.makedirs(dir_name)
+
+def save_model(model_type, accuracy_t, all_ones_acc, model, epoch, cm_t, mcc_t, f1_t):
     '''Saves models and confusion matrices.
     @param model_type    (str)               : best/intermediate/last
     @param accuracy_t    (float)             : Test Accuracy
@@ -135,12 +141,15 @@ def save_model(model_type, accuracy_t, all_ones_acc, model, epoch, cm_t):
     @param model         (model.StockModel)  : Model to save its parameters
     @param epoch         (int)               : Epoch number
     @param cm_t          (List[List[float]]) : Test Confusion Matrix 
+    @param mc_t                                MCC score
+    @param f1_t                                F1 score
     '''
     print(f"Saving the {model_type} model! Test Accuracy: {accuracy_t}, All ones: {all_ones_acc}")
-    print("Saving model: ", config.MODEL_PATH + f"{config.NUM}_model_{epoch}.bin")
-    torch.save(model.state_dict(), config.MODEL_PATH + f"{config.NUM}_model_{epoch}.bin")
+    print("Saving model: ", config.MODEL_PATH + f"{config.args.NUM}_model_{epoch}.bin")
+    torch.save(model.state_dict(), config.MODEL_PATH + f"{config.args.NUM}_model_{epoch}.bin")
 
-    print("Saving Confusion Matrix: ", config.CONFUSION_PATH + f"{config.NUM}_model_{epoch}.txt")
-    cm_file = open(config.CONFUSION_PATH + f"{config.NUM}_model_{epoch}.txt", "w")
+    print("Saving Confusion Matrix: ", config.CONFUSION_PATH + f"{config.args.NUM}_model_{epoch}.txt")
+    cm_file = open(config.CONFUSION_PATH + f"{config.args.NUM}_model_{epoch}.txt", "w")
     for ele in cm_t:
         cm_file.write(str(ele) + "\n")
+    
