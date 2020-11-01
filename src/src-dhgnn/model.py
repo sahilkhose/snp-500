@@ -3,8 +3,10 @@
 Author:
     Sahil Khose (sahilkhose18@gmail.com)
 """
+import attention
 import config
 import dataset
+
 
 
 import numpy as np 
@@ -108,11 +110,9 @@ class StockModel(nn.Module): # TODO hgnn, lstm, fc details
         """
         super(StockModel, self).__init__()
         self.hidden_size = hidden_size
-        self.price_emb = nn.Linear(1, hidden_size)
         self.price_lstm = nn.LSTM(input_size=1, hidden_size=hidden_size, bias=True, batch_first=False)
         self.lstm = nn.LSTM(input_size=hidden_size+config.BERT_SIZE, hidden_size=hidden_size, bias=True, batch_first=False)
-        self.fc1 = nn.Linear(hidden_size, hidden_size*2)
-        self.fc2 = nn.Linear(hidden_size*2, 2)
+        self.fc1 = nn.Linear(hidden_size, 2)
         self.dropout = nn.Dropout(dropout)
 
     def forward(self, hgs, node_embs, prices):
@@ -231,10 +231,25 @@ class StockModel(nn.Module): # TODO hgnn, lstm, fc details
         ### Passing the output from HGNNs into a LSTM followed by linear layers.
         hg_outputs = torch.cat(hg_outputs).view(-1, config.STOCK_NUM, self.hidden_size+config.BERT_SIZE)  # (num_days, stock_num, hidden_size+768) = (4, 116, 800)
         # print(hg_outputs.shape)
-        lstm_out, _ = self.lstm(hg_outputs)[-1]  # (1, stock_num, hidden_size)
-        lstm_out = lstm_out.squeeze(0)  # (stock_num, hidden_size)
-        out = self.fc2(self.dropout(self.fc1(lstm_out)))  # (stock_num, 2)
-        
+        # lstm_out, _ = self.lstm(hg_outputs)[-1]  # (1, stock_num, hidden_size)
+        lstm_out, (h_n_o, c_n_o) = self.lstm(hg_outputs)
+        # print(lstm_out.shape)
+        # (4, 116, 16)
+        # (query length, batch_size, dimensions)
+        # print("__"*80)
+        lstm_attention = lstm_out + output
+        query_a = lstm_attention[-1].view(1, lstm_attention.shape[1], lstm_attention.shape[2])
+        query_a = query_a.permute(1, 0, 2)
+        context_a = lstm_attention.permute(1, 0, 2)
+        # print(query_a.shape, context_a.shape)
+        attention_out, _ = attention.Attention(dimensions=self.hidden_size).cuda()(query=query_a, context=context_a)
+        # lstm_out = lstm_out.squeeze(0)  # (stock_num, hidden_size)
+        # print(attention_out.shape)
+        attention_out = attention_out.squeeze(1)
+        out = self.dropout(self.fc1(attention_out))  # (stock_num, 2)
+        # out = out.squeeze(1)
+        # print(out.shape)
+        # print("__"*80)
         return out
         
         # return torch.randn(116, 2)
