@@ -10,6 +10,7 @@ import dataset
 
 
 import numpy as np 
+import time
 import torch 
 import torch_geometric
 import torch.nn as nn 
@@ -128,7 +129,9 @@ class StockModel(nn.Module): # TODO hgnn, lstm, fc details
 
         @returns out     (torch.tensor): Prediction of all tickers.       tensor.shape: (stock_num, 2)
         """
-        # print("__"*80)
+        print("__"*80)
+        start = time.time()
+        
         new_prices = []
         prices = torch.cat(prices, dim=0)
         # print("__"*80)
@@ -140,7 +143,8 @@ class StockModel(nn.Module): # TODO hgnn, lstm, fc details
         for idx in range(output.shape[0]):
             new_prices.append(output[idx])
         # print(new_prices[0].shape, len(new_prices))
-
+        # print("lstm 1: ", time.time()-start)
+        # start = time.time()
         # print("__"*80)
         ### DHGNN:
         hg_outputs = []
@@ -162,11 +166,15 @@ class StockModel(nn.Module): # TODO hgnn, lstm, fc details
             for ele in set(hyper_edges_id):
                 ids = np.where(hg[1].cpu().numpy() == ele)[0]
                 con_e[ele] = hg[0][ids].cpu().numpy().tolist()
+            # print("con_e dict: ", time.time()-start)
+            # start = time.time()
             
             vertices_id = sorted(list(set(hg[0].cpu().numpy().tolist())))
             for ele in set(vertices_id):
                 ids = np.where(hg[0].cpu().numpy() == ele)[0]
                 adj_u[ele] = hg[1][ids].cpu().numpy().tolist()
+            # print("adj_u dict: ", time.time()-start)
+            # start = time.time()
             
             # print(con_e)
             # print()
@@ -184,6 +192,7 @@ class StockModel(nn.Module): # TODO hgnn, lstm, fc details
                     # b = node_emb[hyper_edge]
                     vc = VertexConv(dim_in=a.shape[1], k=a.shape[0]).cuda()  # (dim_in = 32, k = number of vertices)
                     a_b = vc(a.unsqueeze(0).cuda())
+                    
                     # print(a_b.shape)
                     # print("a_b shape:")
                     # print(a_b.shape)  # (1, 32)
@@ -201,6 +210,8 @@ class StockModel(nn.Module): # TODO hgnn, lstm, fc details
 
                     # print(a.shape, b.shape)
                 # print(hyper_edge_list)
+                # print("Vertex conv: ", time.time()-start)
+                # start = time.time() 
                 hyper_edge_list = torch.cat(hyper_edge_list, dim=1)
                 # print("hyper_edge_list:")
                 # print(hyper_edge_list.shape)
@@ -209,6 +220,8 @@ class StockModel(nn.Module): # TODO hgnn, lstm, fc details
                 # print("__"*80)
                 ec = EdgeConv(hyper_edge_list.shape[-1], hyper_edge_list.shape[-1]//4).cuda()
                 ec_out = ec(hyper_edge_list)
+                # print("edge conv: ", time.time()-start)
+                # start = time.time() 
                 # print("ec_out:")
                 # print(ec_out.shape)
                 hg_tensor[vertex] += ec_out.view(-1)
@@ -226,7 +239,8 @@ class StockModel(nn.Module): # TODO hgnn, lstm, fc details
             # break
         # print("hg_outputs:")
         # print(len(hg_outputs), hg_outputs[0].shape)
-
+        # print("hgnn: ", time.time()-start)
+        # start = time.time() 
 
         ### Passing the output from HGNNs into a LSTM followed by linear layers.
         hg_outputs = torch.cat(hg_outputs).view(-1, config.STOCK_NUM, self.hidden_size+config.BERT_SIZE)  # (num_days, stock_num, hidden_size+768) = (4, 116, 800)
@@ -247,6 +261,8 @@ class StockModel(nn.Module): # TODO hgnn, lstm, fc details
         # print(attention_out.shape)
         attention_out = attention_out.squeeze(1)
         out = self.dropout(self.fc1(attention_out))  # (stock_num, 2)
+        print("model forward: ", time.time()-start)
+        # start = time.time() 
         # out = out.squeeze(1)
         # print(out.shape)
         # print("__"*80)

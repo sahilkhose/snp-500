@@ -14,6 +14,7 @@ import torch
 import torch_geometric
 
 from scipy import sparse
+import time
 from torch_geometric import utils
 
 
@@ -41,6 +42,7 @@ class StockDataset:
         @returns prices    (List[torch.tensor]) : List of prices.           tensor.shape: (num_days, num_stocks, 1)
         '''
         # Selecting today's date:
+        start = time.time()
         today = str(self.x[index])
 
         # Get label
@@ -58,7 +60,7 @@ class StockDataset:
 
         # Fetching hypergraphs and node embeddings
         hgs, node_embs = fetch_data(today)  # hgs: (num_days, 2, x)  node_embs: (num_days, stock_num, 768)
-
+        print("get_item: ", time.time()-start)
         return hgs, node_embs, y, prices
         
 

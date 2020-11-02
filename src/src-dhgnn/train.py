@@ -12,6 +12,7 @@ import engine
 import numpy as np 
 import os 
 import pandas as pd 
+import time
 import torch 
 
 from model import StockModel
@@ -19,12 +20,11 @@ from sklearn import metrics
 from sklearn import model_selection
 print("__"*80)
 print("Imports Done...")
-
 def run():
+    # start = time.time()
     #* Loading data. x: dates(str) list, y: labels dataframe
     x = sorted(open(config.DATES_PATH, "r").read().split())
     y = pd.read_csv(config.LABELS_PATH, index_col=0)
-
     '''
     Spliting dataset:
     60 - 20 - 20      split of total 1784 days
@@ -40,7 +40,8 @@ def run():
     x_train, y_train = x_train[config.LOOKBACK_WINDOW:], y_train[config.LOOKBACK_WINDOW:]
     x_valid, y_valid = x_valid[config.LOOKBACK_WINDOW:], y_valid[config.LOOKBACK_WINDOW:]
     x_test, y_test = x_test[config.LOOKBACK_WINDOW:], y_test[config.LOOKBACK_WINDOW:]
-
+    # print("Spliting dataset", time.time()-start)
+    # start = time.time()
     #* Data Loaders:
     training_set = dataset.StockDataset(x_train, y_train)
     train_data_loader = torch.utils.data.DataLoader(training_set, batch_size=1, num_workers=1)
@@ -51,11 +52,14 @@ def run():
     testing_set = dataset.StockDataset(x_test, y_test)
     test_data_loader = torch.utils.data.DataLoader(testing_set, batch_size=1, num_workers=1)
 
+    # print("Data loaders", time.time()-start)
+    # start = time.time()
     #* Loading model, and train init
     device = torch.device(config.DEVICE)
 
     if not os.path.exists(config.MODEL_PATH):
         os.mkdir(config.MODEL_PATH)
+    if not os.path.exists(config.CONFUSION_PATH):
         os.mkdir(config.CONFUSION_PATH)
 
     # load_file = config.MODEL_PATH + "3_model_500.bin"
@@ -71,13 +75,18 @@ def run():
 
     num_train_steps = int(len(x_train) / config.TRAIN_BATCH_SIZE * config.EPOCHS)
     best_accuracy = 0
-
+    # print("Everything before epoch loop", time.time()-start)
+    # start = time.time()
     for epoch in range(1, config.EPOCHS+1): #TODO change this to while loop for inf train
         #* Train metrics:
         print("__"*80)
         outputs_tr, targets_tr, loss_tr = engine.train_fn(train_data_loader, model, optimizer, device, epoch)
+        # print("Train_fn", time.time()-start)
+        # start = time.time()
         print(f"\nEpoch {epoch} Train metrics:")
         acc, cm, mcc, f1 = engine.metrics_fn(outputs_tr, targets_tr, loss_tr)
+        # print("Metrics", time.time()-start)
+        # start = time.time()
        #* All ones metrics:
         if epoch == 1:
             print("\nALL ONES")
@@ -121,12 +130,15 @@ def run():
 
             elif epoch % 5 == 0:
                 engine.save_model("intermediate", accuracy_t, all_ones_acc, model, epoch, cm_t, mcc_t, f1_t)
+                break
 
             elif epoch % 50 == 0:
                 engine.save_model("intermediate", accuracy_t, all_ones_acc, model, epoch, cm_t, mcc_t, f1_t)
 
             elif epoch == config.EPOCHS:
                 engine.save_model("last", accuracy_t, all_ones_acc, model, epoch, cm_t, mcc_t, f1_t)
+        if epoch == 5:
+            break
 
 if __name__ == "__main__":
     run()

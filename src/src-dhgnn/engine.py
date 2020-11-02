@@ -42,29 +42,32 @@ def train_fn(data_loader, model, optimizer, device, epoch):
     fin_y = []  # To calculate accuracy
     fin_outputs = []  # To calculate accuracy
 
-    # data = next(iter(data_loader))
-    for batch_id, data in tqdm(enumerate(data_loader), total=len(data_loader), desc=f"Train Epoch {epoch}/{config.EPOCHS}"):
-        # Preparing data:
-        hgs, node_embs, y, prices = data 
+    data_i = iter(data_loader)
+    next(data_i)
+    data = next(data_i)
 
-        for hg, node_emb in zip(hgs, node_embs):
-            hg = hg.to(device, dtype=torch.long)
-            for article in node_emb:
-                article = article.to(device, dtype=torch.float)
-        y = y.to(device, dtype=torch.float)
+    # for batch_id, data in tqdm(enumerate(data_loader), total=len(data_loader), desc=f"Train Epoch {epoch}/{config.EPOCHS}"):
+    # Preparing data:
+    hgs, node_embs, y, prices = data 
 
-        # Train:
-        optimizer.zero_grad()
-        outputs = model(hgs, node_embs, prices) # (num_stocks, 2)
-        loss = loss_fn(outputs, y)
-        LOSS += loss
-        loss.backward() 
-        optimizer.step()
+    for hg, node_emb in zip(hgs, node_embs):
+        hg = hg.to(device, dtype=torch.long)
+        for article in node_emb:
+            article = article.to(device, dtype=torch.float)
+    y = y.to(device, dtype=torch.float)
 
-        fin_y.extend(y.view(-1, 1).cpu().detach().numpy().tolist())  # (num_stocks, 1)
-        fin_outputs.extend(torch.sigmoid(outputs).cpu().detach().numpy().tolist())  # (num_stocks, 2)
+    # Train:
+    optimizer.zero_grad()
+    outputs = model(hgs, node_embs, prices) # (num_stocks, 2)
+    loss = loss_fn(outputs, y)
+    LOSS += loss
+    loss.backward() 
+    optimizer.step()
+
+    fin_y.extend(y.view(-1, 1).cpu().detach().numpy().tolist())  # (num_stocks, 1)
+    fin_outputs.extend(torch.sigmoid(outputs).cpu().detach().numpy().tolist())  # (num_stocks, 2)
         
-    LOSS/=len(data_loader)
+    # LOSS/=len(data_loader)
     return fin_outputs, fin_y, LOSS
         
 def eval_fn(data_loader, model, device, epoch, eval_type):
@@ -86,25 +89,25 @@ def eval_fn(data_loader, model, device, epoch, eval_type):
     fin_outputs = []  # To calculate accuracy
 
     with torch.no_grad():
-        # data = next(iter(data_loader))
-        for batch_id, data in tqdm(enumerate(data_loader), total=len(data_loader), desc=f"{eval_type} Epoch {epoch}"):
-            # Preparing data:
-            hgs, node_embs, y, prices = data
+        data = next(iter(data_loader))
+        # for batch_id, data in tqdm(enumerate(data_loader), total=len(data_loader), desc=f"{eval_type} Epoch {epoch}"):
+        # Preparing data:
+        hgs, node_embs, y, prices = data
 
-            for hg, node_emb in zip(hgs, node_embs):
-                hg = hg.to(device, dtype=torch.long)
-                for article in node_emb:
-                    article = article.to(device, dtype=torch.float)
-                # node_emb = node_emb.to(device, dtype=torch.float)
-            y = y.to(device, dtype=torch.float)
+        for hg, node_emb in zip(hgs, node_embs):
+            hg = hg.to(device, dtype=torch.long)
+            for article in node_emb:
+                article = article.to(device, dtype=torch.float)
+            # node_emb = node_emb.to(device, dtype=torch.float)
+        y = y.to(device, dtype=torch.float)
 
-            # Evaluate:
-            outputs = model(hgs, node_embs, prices).view(-1, 2)
-            LOSS += loss_fn(outputs, y)
-            fin_y.extend(y.view(-1, 1).cpu().detach().numpy().tolist())  # (num_stocks, 1)
-            fin_outputs.extend(torch.sigmoid(outputs).cpu().detach().numpy().tolist())  # (num_stocks, 2)
+        # Evaluate:
+        outputs = model(hgs, node_embs, prices).view(-1, 2)
+        LOSS += loss_fn(outputs, y)
+        fin_y.extend(y.view(-1, 1).cpu().detach().numpy().tolist())  # (num_stocks, 1)
+        fin_outputs.extend(torch.sigmoid(outputs).cpu().detach().numpy().tolist())  # (num_stocks, 2)
 
-    LOSS/=len(data_loader) 
+    # LOSS/=len(data_loader) 
     return fin_outputs, fin_y, LOSS
 
 def metrics_fn(outputs, targets, loss, all_ones=False):
