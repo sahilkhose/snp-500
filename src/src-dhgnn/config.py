@@ -51,6 +51,8 @@ ARTICLES = "../../input/DATA/ARTICLES/"
 data_path = f"../../input/DATA-N/filter_data/"
 
 HG_PATH = data_path + "FILTER_HYPERGRAPHS/"
+CON_E_PATH = data_path + "CON_E/"
+ADJ_U_PATH = data_path + "ADJ_U/"
 NAMES_HG_PATH = data_path + "FILTER_NAMES_HG.txt"
 TICKERS_PATH = data_path + "FILTER_TICKERS.txt"
 STOCK_EMB_PATH = data_path + "sent_embs.pt"

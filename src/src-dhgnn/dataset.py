@@ -9,6 +9,7 @@ import ast
 import numpy as np 
 import os
 import pandas as pd 
+import pickle
 import torch
 import torch_geometric
 
@@ -57,8 +58,8 @@ class StockDataset:
             prices.append(price)
 
         #* Fetching hypergraphs and node embeddings
-        hgs, node_embs = fetch_data(today)  # hgs: (num_days, 2, x)  node_embs: (num_days, stock_num, 768)
-        return hgs, node_embs, y, prices
+        con_e_list, adj_u_list, article_embs = fetch_data(today)  # hgs: (num_days, 2, x)  node_embs: (num_days, stock_num, 768)
+        return con_e_list, adj_u_list, article_embs, y, prices
         
 def lookback_window_dates(today):
     '''Returns dates in the lookback window given today's date.
@@ -81,53 +82,26 @@ def fetch_data(today):
     @returns hgs       (List[torch.tensor]) : List of hypergraphs.      tensor.shape: (num_days, 2, x)
     @returns node_embs (List[torch.tensor]) : List of node embeddings.  tensor.shape: (num_days, num_stocks, 768)
     '''
-    hgs = []
-    node_embs = []  # doc_embs
+    con_e_list = []
+    adj_u_list = []
+    article_embs = []
     dates = lookback_window_dates(today)
-    num_edges = 0
     for date in dates:
-        hg = np.load(config.HG_PATH + date + ".npy")
-        num_edges += hg.shape[1]
-        #* Process the npy hg to feed it to the hgnn
-        inci_sparse = sparse.coo_matrix(hg)
-        incidence_edge = utils.from_scipy_sparse_matrix(inci_sparse)
-        hyp_input = incidence_edge[0] # this is edge list (2, x)
+        #* Fetch con_e and adj_u dictionaries:
+        confile = open(os.path.join(config.CON_E_PATH, date),'rb')
+        con_e = pickle.load(confile)
+        con_e_list.append(con_e)
+        confile.close()
+
+        adjfile = open(os.path.join(config.ADJ_U_PATH, date),'rb')
+        adj_u = pickle.load(adjfile)
+        adj_u_list.append(adj_u)
+        adjfile.close()
 
         #* Fetch node_emb
-        node_emb = []
+        article_emb = []
         for article in sorted(os.listdir(os.path.join(config.ARTICLES, date))):
             a = torch.load(os.path.join(config.ARTICLES, date, article), map_location='cpu')
-            node_emb.append(a[:, :config.BERT_SIZE])
-
-        hgs.append(hyp_input)
-        node_embs.append(node_emb)
-    return hgs, node_embs
-    
-def node_emb_generate(date):
-    '''Returns node_emb for a given date.
-    @param   date     (str)          : Date for node_emb. 
-    @returns node_emb (torch.tensor) : Node embedding.     tensor.shape: (num_stocks, 768)   
-    '''
-    NAMES_HG = open(config.NAMES_HG_PATH, "r")
-    DATES = sorted(open(config.DATES_PATH, "r").read().split())
-    TICKERS = sorted(open(config.TICKERS_PATH, "r").read().split())
-    tick_to_idx = {}  # ticker to index
-    idx_to_tick = {}  # index to ticker  # unused
-
-    for idx, ticker in enumerate(TICKERS):
-        tick_to_idx[ticker] = idx
-        idx_to_tick[idx] = ticker
-
-    stock_embs = torch.load(config.STOCK_EMB_PATH, map_location="cpu")  # (num_stocks, 768)
-    node_emb = torch.zeros(len(TICKERS), 768)  # (num_stocks, 768)
-
-    for reports, day in zip(NAMES_HG, DATES):
-        if(day == date):
-            reports = list(ast.literal_eval(reports))
-            print(reports)
-            # for report in reports:
-            #     for stock in report:
-            #         node_emb[tick_to_idx[stock]] += stock_embs[tick_to_idx[stock]]
-            break
-
-    return node_emb
+            article_emb.append(a[:, :config.BERT_SIZE])
+        article_embs.append(article_emb)
+    return con_e_list, adj_u_list, article_embs
