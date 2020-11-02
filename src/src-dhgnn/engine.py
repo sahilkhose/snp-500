@@ -13,7 +13,7 @@ import torch.nn as nn
 from sklearn import metrics
 from tqdm import tqdm 
 
-def loss_fn(outputs, targets): # [[0.5423, 0.4577]]
+def loss_fn(outputs, targets):
     '''CrossEntropyLoss: Combines Softmax and NLL loss.
     @param   outputs (torch.tensor) : Model predictions.    tensor.shape: (num_stocks, 2)
     @param   targets (torch.tensor) : Prediction label.     tensor.shape: (1, num_stocks)
@@ -36,38 +36,38 @@ def train_fn(data_loader, model, optimizer, device, epoch):
     @returns fin_y       (List[List[float]]) : List of list containing label. (1)
     @returns fin_outputs (List[List[float]]) : List of list containing model predictions through sigmoid. (2)
     '''
-
     model.train()
     LOSS = 0.
     fin_y = []  # To calculate accuracy
     fin_outputs = []  # To calculate accuracy
 
-    data_i = iter(data_loader)
-    next(data_i)
-    data = next(data_i)
+    #* To train on one epoch:
+    # data_i = iter(data_loader) 
+    # next(data_i)
+    # data = next(data_i)
 
-    # for batch_id, data in tqdm(enumerate(data_loader), total=len(data_loader), desc=f"Train Epoch {epoch}/{config.EPOCHS}"):
-    # Preparing data:
-    hgs, node_embs, y, prices = data 
+    for batch_id, data in tqdm(enumerate(data_loader), total=len(data_loader), desc=f"Train Epoch {epoch}/{config.EPOCHS}"):
+        #* Preparing data:
+        hgs, node_embs, y, prices = data 
 
-    for hg, node_emb in zip(hgs, node_embs):
-        hg = hg.to(device, dtype=torch.long)
-        for article in node_emb:
-            article = article.to(device, dtype=torch.float)
-    y = y.to(device, dtype=torch.float)
+        for hg, node_emb in zip(hgs, node_embs):
+            hg = hg.to(device, dtype=torch.long)
+            for article in node_emb:
+                article = article.to(device, dtype=torch.float)
+        y = y.to(device, dtype=torch.float)
 
-    # Train:
-    optimizer.zero_grad()
-    outputs = model(hgs, node_embs, prices) # (num_stocks, 2)
-    loss = loss_fn(outputs, y)
-    LOSS += loss
-    loss.backward() 
-    optimizer.step()
+        #* Train:
+        optimizer.zero_grad()
+        outputs = model(hgs, node_embs, prices) # (num_stocks, 2)
+        loss = loss_fn(outputs, y)
+        LOSS += loss
+        loss.backward() 
+        optimizer.step()
 
-    fin_y.extend(y.view(-1, 1).cpu().detach().numpy().tolist())  # (num_stocks, 1)
-    fin_outputs.extend(torch.sigmoid(outputs).cpu().detach().numpy().tolist())  # (num_stocks, 2)
+        fin_y.extend(y.view(-1, 1).cpu().detach().numpy().tolist())  # (num_stocks, 1)
+        fin_outputs.extend(torch.sigmoid(outputs).cpu().detach().numpy().tolist())  # (num_stocks, 2)
         
-    # LOSS/=len(data_loader)
+    LOSS/=len(data_loader)
     return fin_outputs, fin_y, LOSS
         
 def eval_fn(data_loader, model, device, epoch, eval_type):
@@ -82,32 +82,31 @@ def eval_fn(data_loader, model, device, epoch, eval_type):
     @returns fin_y       (List[List[float]]) : List of list containing label. (1)
     @returns fin_outputs (List[List[float]]) : List of list containing model predictions through sigmoid. (2)
     '''
-
     model.eval()
     LOSS = 0.
     fin_y = []  # To calculate accuracy
     fin_outputs = []  # To calculate accuracy
 
     with torch.no_grad():
-        data = next(iter(data_loader))
-        # for batch_id, data in tqdm(enumerate(data_loader), total=len(data_loader), desc=f"{eval_type} Epoch {epoch}"):
-        # Preparing data:
-        hgs, node_embs, y, prices = data
+        #* To train on one epoch:
+        # data = next(iter(data_loader))
+        for batch_id, data in tqdm(enumerate(data_loader), total=len(data_loader), desc=f"{eval_type} Epoch {epoch}"):
+            # Preparing data:
+            hgs, node_embs, y, prices = data
 
-        for hg, node_emb in zip(hgs, node_embs):
-            hg = hg.to(device, dtype=torch.long)
-            for article in node_emb:
-                article = article.to(device, dtype=torch.float)
-            # node_emb = node_emb.to(device, dtype=torch.float)
-        y = y.to(device, dtype=torch.float)
+            for hg, node_emb in zip(hgs, node_embs):
+                hg = hg.to(device, dtype=torch.long)
+                for article in node_emb:
+                    article = article.to(device, dtype=torch.float)
+            y = y.to(device, dtype=torch.float)
 
-        # Evaluate:
-        outputs = model(hgs, node_embs, prices).view(-1, 2)
-        LOSS += loss_fn(outputs, y)
-        fin_y.extend(y.view(-1, 1).cpu().detach().numpy().tolist())  # (num_stocks, 1)
-        fin_outputs.extend(torch.sigmoid(outputs).cpu().detach().numpy().tolist())  # (num_stocks, 2)
+            # Evaluate:
+            outputs = model(hgs, node_embs, prices).view(-1, 2)
+            LOSS += loss_fn(outputs, y)
+            fin_y.extend(y.view(-1, 1).cpu().detach().numpy().tolist())  # (num_stocks, 1)
+            fin_outputs.extend(torch.sigmoid(outputs).cpu().detach().numpy().tolist())  # (num_stocks, 2)
 
-    # LOSS/=len(data_loader) 
+    LOSS/=len(data_loader) 
     return fin_outputs, fin_y, LOSS
 
 def metrics_fn(outputs, targets, loss, all_ones=False):
@@ -149,16 +148,20 @@ def save_model(model_type, accuracy_t, all_ones_acc, model, epoch, cm_t, mcc_t, 
     @param mc_t                                MCC score
     @param f1_t                                F1 score
     '''
+    #* Saving model:
     print(f"Saving the {model_type} model! Test Accuracy: {accuracy_t}, All ones: {all_ones_acc}")
     print("Saving model: ", config.MODEL_PATH + f"{config.args.NUM}_model_{epoch}.bin")
     torch.save(model.state_dict(), config.MODEL_PATH + f"{config.args.NUM}_model_{epoch}.bin")
 
+    #* Saving confusion matrix:
     print("Saving Confusion Matrix: ", config.CONFUSION_PATH + f"{config.args.NUM}_model_{epoch}.txt")
     cm_file = open(config.CONFUSION_PATH + f"{config.args.NUM}_model_{epoch}.txt", "w")
     for ele in cm_t:
         cm_file.write(str(ele) + "\n")
+
+    #* Saving metrics to test_data_sheet.csv
+    print(f"Saving metrics to: {config.TEST_DATA_SHEET}")
     df = pd.read_csv(config.TEST_DATA_SHEET, index_col=[0])
-    ### append rows to an empty DataFrame 
     df = df.append({
     'model' : f"{config.args.NUM}_model_{epoch}.bin", 
     'all_ones' : round(all_ones_acc, 4), 
