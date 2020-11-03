@@ -59,6 +59,7 @@ class StockDataset:
 
         #* Fetching hypergraphs and node embeddings
         con_e_list, adj_u_list, article_embs = fetch_data(today)  # hgs: (num_days, 2, x)  node_embs: (num_days, stock_num, 768)
+
         return con_e_list, adj_u_list, article_embs, y, prices
         
 def lookback_window_dates(today):

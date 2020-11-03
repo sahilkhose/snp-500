@@ -42,31 +42,31 @@ def train_fn(data_loader, model, optimizer, device, epoch):
     fin_outputs = []  # To calculate accuracy
 
     #* To train on one epoch:
-    data_i = iter(data_loader) 
-    next(data_i)
-    data = next(data_i)
+    # data_i = iter(data_loader) 
+    # next(data_i)
+    # data = next(data_i)
 
-    # for batch_id, data in tqdm(enumerate(data_loader), total=len(data_loader), desc=f"Train Epoch {epoch}/{config.EPOCHS}"):
+    for batch_id, data in tqdm(enumerate(data_loader), total=len(data_loader), desc=f"Train Epoch {epoch}/{config.EPOCHS}"):
         #* Preparing data:
-    con_e_list, adj_u_list, article_embs, y, prices = data 
+        con_e_list, adj_u_list, article_embs, y, prices = data 
 
-    for article_emb in article_embs:
-        for article in article_emb:
-            article = article.to(device, dtype=torch.float)
-    y = y.to(device, dtype=torch.float)
+        for article_emb in article_embs:
+            for article in article_emb:
+                article = article.to(device, dtype=torch.float)
+        y = y.to(device, dtype=torch.float)
 
-    #* Train:
-    optimizer.zero_grad()
-    outputs = model(con_e_list, adj_u_list, article_embs, prices) # (num_stocks, 2)
-    loss = loss_fn(outputs, y)
-    LOSS += loss
-    loss.backward() 
-    optimizer.step()
+        #* Train:
+        optimizer.zero_grad()
+        outputs = model(con_e_list, adj_u_list, article_embs, prices) # (num_stocks, 2)
+        loss = loss_fn(outputs, y)
+        LOSS += loss
+        loss.backward() 
+        optimizer.step()
 
-    fin_y.extend(y.view(-1, 1).cpu().detach().numpy().tolist())  # (num_stocks, 1)
-    fin_outputs.extend(torch.sigmoid(outputs).cpu().detach().numpy().tolist())  # (num_stocks, 2)
+        fin_y.extend(y.view(-1, 1).cpu().detach().numpy().tolist())  # (num_stocks, 1)
+        fin_outputs.extend(torch.sigmoid(outputs).cpu().detach().numpy().tolist())  # (num_stocks, 2)
         
-    # LOSS/=len(data_loader)
+    LOSS/=len(data_loader)
     return fin_outputs, fin_y, LOSS
         
 def eval_fn(data_loader, model, device, epoch, eval_type):
@@ -88,23 +88,23 @@ def eval_fn(data_loader, model, device, epoch, eval_type):
 
     with torch.no_grad():
         #* To train on one epoch:
-        data = next(iter(data_loader))
-        # for batch_id, data in tqdm(enumerate(data_loader), total=len(data_loader), desc=f"{eval_type} Epoch {epoch}"):
-        # Preparing data:
-        con_e_list, adj_u_list, article_embs, y, prices = data 
+        # data = next(iter(data_loader))
+        for batch_id, data in tqdm(enumerate(data_loader), total=len(data_loader), desc=f"{eval_type} Epoch {epoch}"):
+            #* Preparing data:
+            con_e_list, adj_u_list, article_embs, y, prices = data 
 
-        for article_emb in article_embs:
-            for article in article_emb:
-                article = article.to(device, dtype=torch.float)
-        y = y.to(device, dtype=torch.float)
+            for article_emb in article_embs:
+                for article in article_emb:
+                    article = article.to(device, dtype=torch.float)
+            y = y.to(device, dtype=torch.float)
 
-        # Evaluate:
-        outputs = model(con_e_list, adj_u_list, article_embs, prices).view(-1, 2)
-        LOSS += loss_fn(outputs, y)
-        fin_y.extend(y.view(-1, 1).cpu().detach().numpy().tolist())  # (num_stocks, 1)
-        fin_outputs.extend(torch.sigmoid(outputs).cpu().detach().numpy().tolist())  # (num_stocks, 2)
+            #* Evaluate:
+            outputs = model(con_e_list, adj_u_list, article_embs, prices).view(-1, 2)
+            LOSS += loss_fn(outputs, y)
+            fin_y.extend(y.view(-1, 1).cpu().detach().numpy().tolist())  # (num_stocks, 1)
+            fin_outputs.extend(torch.sigmoid(outputs).cpu().detach().numpy().tolist())  # (num_stocks, 2)
 
-    # LOSS/=len(data_loader) 
+    LOSS/=len(data_loader) 
     return fin_outputs, fin_y, LOSS
 
 def metrics_fn(outputs, targets, loss, all_ones=False):
