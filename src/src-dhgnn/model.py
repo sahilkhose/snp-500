@@ -15,7 +15,7 @@ import torch.nn as nn
 import torch.nn.functional as F 
 
 class StockModel(nn.Module): # TODO hgnn, lstm, fc details
-    def __init__(self, stock_emb_dim=config.BERT_SIZE, hidden_size=16, heads=4, negative_slope=0.2, dropout=0.1):
+    def __init__(self, stock_emb_dim=config.args.BERT_SIZE, hidden_size=16, heads=4, negative_slope=0.2, dropout=0.1):
         """Init StockModel.
         @param stock_emb_dim  (int)  : BERT stock emb dimension.
         @param hidden_size    (int)  : Hidden dimension size.
@@ -26,7 +26,7 @@ class StockModel(nn.Module): # TODO hgnn, lstm, fc details
         super(StockModel, self).__init__()
         self.hidden_size = hidden_size
         self.price_lstm = nn.LSTM(input_size=1, hidden_size=hidden_size, bias=True, batch_first=False)
-        self.lstm = nn.LSTM(input_size=hidden_size+config.BERT_SIZE, hidden_size=hidden_size, bias=True, batch_first=False)
+        self.lstm = nn.LSTM(input_size=hidden_size+config.args.BERT_SIZE, hidden_size=hidden_size, bias=True, batch_first=False)
         self.fc1 = nn.Linear(hidden_size, 2)
         self.dropout = nn.Dropout(dropout)
 
@@ -62,7 +62,7 @@ class StockModel(nn.Module): # TODO hgnn, lstm, fc details
             for k, v in adj_u_.items():
                 adj_u[k] = [int(ele) for ele in v]
             ###* VertexConv followed by EdgeConv for every vertex in adj_u
-            hg_tensor = torch.zeros(116, config.BERT_SIZE+self.hidden_size).cuda()
+            hg_tensor = torch.zeros(116, config.args.BERT_SIZE+self.hidden_size).cuda()
             for vertex, hyper_edge_set in adj_u.items():
                 ###* VertexConv of all vertices for every hyper edge, followed by concat with article emb
                 hyper_edge_emb_list = []
@@ -75,7 +75,7 @@ class StockModel(nn.Module): # TODO hgnn, lstm, fc details
                 hyper_edge_emb_list = torch.cat(hyper_edge_emb_list, dim=1)
                 ###* Edge conv over the concatenated hyperedge embeddings
                 ec = attention.EdgeConv(hyper_edge_emb_list.shape[-1], hyper_edge_emb_list.shape[-1]//4).cuda()
-                ec_out = ec(hyper_edge_emb_list)
+                ec_out = ec(hyper_edge_emb_list.float())
                 ###* Storing this embedding for the corresponding vertex:
                 hg_tensor[vertex] += ec_out.view(-1)
             hg_outputs.append(hg_tensor)
@@ -86,7 +86,7 @@ class StockModel(nn.Module): # TODO hgnn, lstm, fc details
         # start = time.time()
         ###* Passing the output from HGNNs into a LSTM:
         ###* Using all the hidden states of the lstm
-        hg_outputs = torch.cat(hg_outputs).view(-1, config.STOCK_NUM, self.hidden_size+config.BERT_SIZE)  # (num_days, stock_num, hidden_size + bert_size) = (4, 116, 800)
+        hg_outputs = torch.cat(hg_outputs).view(-1, config.STOCK_NUM, self.hidden_size+config.args.BERT_SIZE)  # (num_days, stock_num, hidden_size + bert_size) = (4, 116, 800)
         lstm_out, (h_n_o, c_n_o) = self.lstm(hg_outputs)  # (num_days, stock_num, hidden_size)
         ###* Skip connection:
         lstm_attention = lstm_out + new_prices

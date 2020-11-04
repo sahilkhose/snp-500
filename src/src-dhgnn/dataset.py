@@ -72,7 +72,7 @@ def lookback_window_dates(today):
     for idx, date_temp in enumerate(DATES):
         if date_temp == today:
             break
-    for idx in range(idx-config.LOOKBACK_WINDOW, idx+1):
+    for idx in range(idx-config.args.LOOKBACK_WINDOW, idx+1):
         dates.append(DATES[idx])
 
     return dates
@@ -99,10 +99,11 @@ def fetch_data(today):
         adj_u_list.append(adj_u)
         adjfile.close()
 
-        #* Fetch node_emb
+        #* Fetch article_emb
         article_emb = []
         for article in sorted(os.listdir(os.path.join(config.ARTICLES, date))):
-            a = torch.load(os.path.join(config.ARTICLES, date, article), map_location='cpu')
-            article_emb.append(a[:, :config.BERT_SIZE])
+            a = torch.tensor(torch.load(os.path.join(config.ARTICLES, date, article), map_location='cpu'), dtype=float)
+            # article_emb.append(a[:, :config.args.BERT_SIZE])
+            article_emb.append(a.view(1, -1))
         article_embs.append(article_emb)
     return con_e_list, adj_u_list, article_embs

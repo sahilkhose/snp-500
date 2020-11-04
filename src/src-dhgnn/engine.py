@@ -46,7 +46,7 @@ def train_fn(data_loader, model, optimizer, device, epoch):
     # next(data_i)
     # data = next(data_i)
 
-    for batch_id, data in tqdm(enumerate(data_loader), total=len(data_loader), desc=f"Train Epoch {epoch}/{config.EPOCHS}"):
+    for batch_id, data in tqdm(enumerate(data_loader), total=len(data_loader), desc=f"Train Epoch {epoch}/{config.args.EPOCHS}"):
         #* Preparing data:
         con_e_list, adj_u_list, article_embs, y, prices = data 
 
