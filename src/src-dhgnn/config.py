@@ -50,7 +50,7 @@ ARTICLES = "../../input/DATA/ARTICLES/"
 # data_path = f"../input/DATA-{STOCK_NUM}/"
 data_path = f"../../input/DATA-N/filter_data/"
 
-HG_PATH = data_path + "FILTER_HYPERGRAPHS/"
+# HG_PATH = data_path + "FILTER_HYPERGRAPHS/"
 CON_E_PATH = data_path + "CON_E/"
 ADJ_U_PATH = data_path + "ADJ_U/"
 NAMES_HG_PATH = data_path + "FILTER_NAMES_HG.txt"
@@ -64,5 +64,5 @@ PRICE_PATH = data_path + "FILTER_PRICE.csv"
 ################################################################
 LOOKBACK_WINDOW = 3  # actual window = LOOKBACK_WINDOW + 1(today's data)
 DEVICE = "cuda"
-BERT_PATH = "../../input/bert_base_uncased"
+# BERT_PATH = "../../input/bert_base_uncased"
 TRAIN_BATCH_SIZE = 1
