@@ -21,7 +21,8 @@ def loss_fn(outputs, targets):
     @returns loss    (torch.float)  : Cross Entropy Loss. 
     '''
     #* Data imbalance correction: [[0.5423, 0.4577]]
-    loss = nn.CrossEntropyLoss(weight=torch.tensor([[0.538, 0.462]]).to(device="cuda"))
+    # loss = nn.CrossEntropyLoss(weight=torch.tensor([[0.538, 0.462]]).to(device="cuda"))
+    loss = nn.CrossEntropyLoss()
     return loss(outputs, targets.view(-1).long()) 
 
 def train_fn(data_loader, model, optimizer, device, epoch):
