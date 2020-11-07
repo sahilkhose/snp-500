@@ -60,7 +60,7 @@ def train_fn(data_loader, model, optimizer, device, epoch):
         optimizer.zero_grad()
         outputs = model(con_e_list, adj_u_list, article_embs, prices) # (num_stocks, 2)
         loss = loss_fn(outputs, y)
-        LOSS += loss
+        LOSS += loss.cpu().detach()
         loss.backward() 
         optimizer.step()
 
@@ -101,7 +101,7 @@ def eval_fn(data_loader, model, device, epoch, eval_type):
 
             #* Evaluate:
             outputs = model(con_e_list, adj_u_list, article_embs, prices).view(-1, 2)
-            LOSS += loss_fn(outputs, y)
+            LOSS += loss_fn(outputs, y).cpu().detach()
             fin_y.extend(y.view(-1, 1).cpu().detach().numpy().tolist())  # (num_stocks, 1)
             fin_outputs.extend(torch.sigmoid(outputs).cpu().detach().numpy().tolist())  # (num_stocks, 2)
 
