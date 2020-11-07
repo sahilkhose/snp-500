@@ -105,27 +105,27 @@ def run():
         df.to_csv(config.TRAIN_DATA_SHEET)
        
         #* Validation, Testing and saving models:
-        # if (epoch % config.args.EVAL_EVERY == 0) or (epoch % 50 == 0) or (epoch == config.args.EPOCHS):
-        #* Validation:
-        outputs_v, targets_v, loss_v = engine.eval_fn(valid_data_loader, model, device, epoch, "Valid")
-        print(f"\nEpoch {epoch} Valid metrics:")
-        engine.metrics_fn(outputs_v, targets_v, loss_v)
+        if (epoch % config.args.EVAL_EVERY == 0) or (epoch % 50 == 0) or (epoch == config.args.EPOCHS):
+            #* Validation:
+            outputs_v, targets_v, loss_v = engine.eval_fn(valid_data_loader, model, device, epoch, "Valid")
+            print(f"\nEpoch {epoch} Valid metrics:")
+            engine.metrics_fn(outputs_v, targets_v, loss_v)
 
-        #* Testing:
-        outputs_t, targets_t, loss_t = engine.eval_fn(test_data_loader, model, device, epoch, "Test")
-        print(f"\nEpoch {epoch} Test metrics:")
-        accuracy_t, cm_t, mcc_t, f1_t = engine.metrics_fn(outputs_t, targets_t, loss_t)
-        
-        #* Saving models and Confusion Matrix:
-        if accuracy_t > best_accuracy:
-            engine.save_model("best", accuracy_t, all_ones_acc, model, epoch, cm_t, mcc_t, f1_t)
-            best_accuracy = accuracy_t
-        elif (epoch % 5 == 0) or (epoch % 50 == 0):
-            engine.save_model("intermediate", accuracy_t, all_ones_acc, model, epoch, cm_t, mcc_t, f1_t)
-        elif epoch == config.args.EPOCHS:
-            engine.save_model("last", accuracy_t, all_ones_acc, model, epoch, cm_t, mcc_t, f1_t)
-        if epoch == 5:
-            break
+            #* Testing:
+            outputs_t, targets_t, loss_t = engine.eval_fn(test_data_loader, model, device, epoch, "Test")
+            print(f"\nEpoch {epoch} Test metrics:")
+            accuracy_t, cm_t, mcc_t, f1_t = engine.metrics_fn(outputs_t, targets_t, loss_t)
+            
+            #* Saving models and Confusion Matrix:
+            if accuracy_t > best_accuracy:
+                engine.save_model("best", accuracy_t, all_ones_acc, model, epoch, cm_t, mcc_t, f1_t)
+                best_accuracy = accuracy_t
+            elif (epoch % 5 == 0) or (epoch % 50 == 0):
+                engine.save_model("intermediate", accuracy_t, all_ones_acc, model, epoch, cm_t, mcc_t, f1_t)
+            elif epoch == config.args.EPOCHS:
+                engine.save_model("last", accuracy_t, all_ones_acc, model, epoch, cm_t, mcc_t, f1_t)
+        # if epoch == 5:
+        #     break
 
 if __name__ == "__main__":
     run()
