@@ -72,8 +72,8 @@ CON_E_PATH = data_path + "CON_E/"
 ADJ_U_PATH = data_path + "ADJ_U/"
 NAMES_HG_PATH = data_path + "FILTER_NAMES_HG.txt"
 TICKERS_PATH = data_path + "FILTER_TICKERS.txt"
-# PRICE_PATH = data_path + "FILTER_PRICE.csv"
-PRICE_PATH = data_path + "FILTER_NORM_PRICE.csv"
+PRICE_PATH = data_path + "FILTER_PRICE.csv"
+# PRICE_PATH = data_path + "FILTER_NORM_PRICE.csv"
 LABELS_PATH = data_path + "FILTER_LABELS.csv"
 
 ################################################################
